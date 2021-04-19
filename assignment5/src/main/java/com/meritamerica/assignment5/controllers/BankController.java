@@ -119,12 +119,12 @@ public class BankController {
 			} 
 			if((accountHolder.getCombinedBalance() + sv.getBalance()) > 250000) {
 					throw new ExceedsCombinedBalanceLimitException("exceeds limit of amount 250,000 max");
-				}
-				sv=new SavingsAccount(MeritBank.getNextAccountNumber(),sv.getBalance(),SavingsAccount.SAVINGS_INTERESTRATE,MeritBank.getDate());
-				accountHolder.addSavingsAccount(sv);
-
-				return sv;
 			}
+			sv=new SavingsAccount(MeritBank.getNextAccountNumber(),sv.getBalance(),SavingsAccount.SAVINGS_INTERESTRATE,MeritBank.getDate());
+			accountHolder.addSavingsAccount(sv);
+
+			return sv;
+		}
 		
 		throw new NoResourceFoundException("Invalid id");
 	}
@@ -142,18 +142,28 @@ public class BankController {
 	@ResponseStatus(HttpStatus.CREATED)
 	public CDAccount addCDAccounts(@RequestBody CDAccountDTO dto,@PathVariable int id) throws NoResourceFoundException,NegativeAmountException {
 		if(id<=MeritBank.accHolderList.size()) {
+			
+			AccountHolder accountHolder = MeritBank.getAccountHolderById(id);
 			CDOffering cdo = MeritBank.getCDOfferingById(dto.getCdOffering().getId());
 			CDAccount cda = new CDAccount(cdo, dto.getBalance());
 			
-			AccountHolder accountHolder = MeritBank.getAccountHolderById(id);
 			if(cda.getBalance()<0) {
 				throw new NegativeAmountException();
-			} else {
-				accountHolder.addCDAccount(cda); 
-				return cda;
-			}
+			} 
+			
+			accountHolder.addCDAccount(cda); 
+			return cda;
 		}
 		throw new NoResourceFoundException("Invalid id");
+	}
+	
+	@GetMapping(value="/AccountHolders/{id}/CDAccounts")
+	@ResponseStatus(HttpStatus.CREATED)
+	public CDAccount[] getCDAcc(AccountHolder accountHolder, @PathVariable int id) throws NoResourceFoundException {
+		if(id>MeritBank.accHolderList.size())
+			throw new NoResourceFoundException("Invalid id");
+		accountHolder = MeritBank.getAccountHolderById(id);
+		return accountHolder.getCDAccounts();
 	}
 	
 }

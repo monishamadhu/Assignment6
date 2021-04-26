@@ -1,0 +1,126 @@
+
+POST /CDOfferings
+{
+	"interestRate": 0.025,
+	"term": 5
+}
+{
+	"interestRate": 0.015,
+	"term": 6
+}
+{
+	"interestRate": 0.025,
+	"term": -----------------------------------ERROR term cannot be left blank
+}
+{
+	"interestRate": 1.025,----------------------ERROR interestRate cannot be greater than or equal to 1
+	"term": 5
+}
+{
+	"interestRate": 0.025,
+	"term": -2-----------------------------------ERROR term cannot be less than 1
+}
+{
+	"interestRate": -0.325,-----------------------ERROR interestRate cannot be less than or equal to 0
+	"term": 5
+}
+
+GET CDOfferings
+
+
+ POST /AccountHolders
+
+ {
+     "firstName": "Saadiq",
+    "middleName": "",
+    "lastName": "",---------------------------------ERROR last name cannot be left empty
+    "ssn": "123456789"
+
+ }
+{
+     "firstName": "",---------------------------------ERROR first name cannot be left empty
+    "middleName": "",
+    "lastName": "Manji",
+    "ssn": "123456789"
+
+ }
+{
+     "firstName": "Saadiq",
+    "middleName": "",
+    "lastName": "Manji",
+    "ssn": ""---------------------------------ERROR ssn cannot be left empty
+
+ }
+
+ {
+     "firstName": "Monisha",
+    "middleName": "P",
+    "lastName": "Madhu",
+    "ssn": "987654321"
+
+ }
+
+ {
+     "firstName": "Prasob",
+    "middleName": "",
+    "lastName": "Kizhedath",
+    "ssn": "567891234"
+
+ }
+
+{
+     "firstName": "Gayathri",
+    "middleName": "Pradeep",
+    "lastName": "Kumar",
+    "ssn": "123498765"
+
+ }
+
+GET /AccountHolders
+GET /AccountHolders/1
+GET /AccountHolders/5----------------------ERROR invalid id
+
+POST /AccountHolders/1/CheckingAccounts
+{
+	"balance": 10000
+}
+POST /AccountHolders/1/CheckingAccounts
+{
+	"balance": -10000-------------------ERROR balance cannot be less than 0
+}
+
+POST /AccountHolders/5/CheckingAccounts---------------ERROR Accountholder does not exist with the given id
+GET /AccountHolders/2/CheckingAccounts
+GET /AccountHolders/6/CheckingAccounts-----------------ERROR Accountholder does not exist with the given id
+
+POST /AccountHolders/1/SavingsAccounts
+{
+	"balance": 10000
+}
+POST /AccountHolders/1/SavingsAccounts
+{
+	"balance": -10000-------------------ERROR balance cannot be less than 0
+}
+
+POST /AccountHolders/5/SavingsAccounts---------------ERROR Accountholder does not exist with the given id
+GET /AccountHolders/2/SavingsAccounts
+GET /AccountHolders/6/SavingsAccounts-----------------ERROR Accountholder does not exist with the given id
+
+POST /AccountHolders/1/CDAccounts
+{
+	"balance": 10000,
+	"cdOffering": {
+		“id”: 1
+	}
+}
+POST /AccountHolders/1/CDAccounts
+{
+	"balance": -10000,-------------------ERROR balance cannot be less than 0
+	"cdOffering": {
+		“id”: 1
+	}
+}
+POST /AccountHolders/5/CDAccounts---------------ERROR Accountholder does not exist with the given id
+ 
+GET /AccountHolders/1/CDAccounts
+GET /AccountHolders/5/CDAccounts---------------ERROR Accountholder does not exist with the given id

@@ -209,11 +209,15 @@ public class AccountHolder implements Comparable<AccountHolder> {
 	}
 
 	public double getSavingsBalance() {
-		SavingsAccount[] savingArr = (SavingsAccount[]) savingsAccountList.toArray();
+//		SavingsAccount[] savingArr = (SavingsAccount[]) savingsAccountList.toArray();
 		double savingsTotal = 0;
-		for (int i = 0; i < savingArr.length; i++) {
-			savingsTotal += (savingArr[i].getBalance());
+		for (SavingsAccount sa : savingsAccountList) {
+			savingsTotal += (sa.getBalance());
 		}
+		
+//		for (int i = 0; i < savingArr.length; i++) {
+//			savingsTotal += (savingArr[i].getBalance());
+//		}
 
 		return savingsTotal;
 	}

@@ -10,6 +10,7 @@ import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.meritamerica.assignment6.models.AccountHolder;
@@ -17,10 +18,15 @@ import com.meritamerica.assignment6.models.CDAccount;
 import com.meritamerica.assignment6.models.CDOffering;
 import com.meritamerica.assignment6.models.CheckingAccount;
 import com.meritamerica.assignment6.models.SavingsAccount;
-
+import com.meritamerica.assignment6.repository.AccountHolderRepository;
+import com.meritamerica.assignment6.repository.CDOfferingRepository;
 @Service
 public class MeritBankServiceImpl implements MeritBankService {
-
+	@Autowired
+	CDOfferingRepository cdOfferingRepository; 
+	@Autowired
+	AccountHolderRepository accountHolderRepository;
+	
 	@Override
 	public void addAccountHolder(AccountHolder accountHolder) {
 		accHolderList.add(accountHolder);
@@ -34,7 +40,8 @@ public class MeritBankServiceImpl implements MeritBankService {
 	
 	@Override
 	public AccountHolder getAccountHolderById(int accountHolderId) {
-		return accHolderList.get(accountHolderId - 1);
+		return accountHolderRepository.findById(accountHolderId).orElse(null);
+		//return accHolderList.get(accountHolderId - 1);
 	}
 	
 	
@@ -44,7 +51,9 @@ public class MeritBankServiceImpl implements MeritBankService {
 	
 	@Override
 	public CDOffering getCDOfferingById(int cdOfferingId) {
-		return offeringsList.get(cdOfferingId - 1);
+		
+		return cdOfferingRepository.findById(cdOfferingId).orElse(null);
+//		return offeringsList.get(cdOfferingId - 1);
 	}
 	
 	/*@Override
@@ -90,7 +99,8 @@ public class MeritBankServiceImpl implements MeritBankService {
 		offerings = null;
 	}
 	
-
+	
+	@Override
 	public void setCDOfferings(List<CDOffering> offerings) {
 		this.offerings = offerings; 
 	}

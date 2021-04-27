@@ -6,33 +6,39 @@ import java.util.Date;
 import java.util.StringTokenizer;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 
-//import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @MappedSuperclass
-//@Entity
-//@Inheritance(strategy = InheritanceType.JOINED)
+
 public abstract class BankAccount {
-//	@Id
-//	@GeneratedValue(strategy = GenerationType.AUTO)
-//	private int id;
+
 	private  double balance;
 	private  double interestRate;
 	private  long accountNumber;
 	private  java.util.Date date;
 	
-//	public int getId() {
-//		return id;
-//	}
-//
-//	public void setId(int id) {
-//		this.id = id;
-//	}
+	/*@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "accountholder_id")
+//	@JsonIgnore
+    private AccountHolder accountHolder;
+	
+	public AccountHolder getAccountHolder() {
+		return accountHolder;
+	}
+	public void setAccountHolder(AccountHolder accountHolder) {
+		this.accountHolder = accountHolder;
+	}*/
+	
 	public BankAccount(){
 	
 	}
@@ -115,8 +121,6 @@ public abstract class BankAccount {
 		String toStr =  "Acct Num "+getAccountNumber()+ " balance "+getBalance();
 		return toStr;
 	}
-	  */
-	
-	
+	  */	
 //private ArrayList<Transaction> transactAmount = new ArrayList<Transaction>();
 }

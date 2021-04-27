@@ -13,6 +13,7 @@ import javax.validation.constraints.NotBlank;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.meritamerica.assignment6.services.MeritBankServiceImpl;
 
 @Entity
@@ -38,6 +39,7 @@ public class CDOffering {
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "cdOffering")
 	private List<CDAccount> cdAccounts;
 
+	@JsonIgnore
 	public List<CDAccount> getCdAccounts() {
 		return cdAccounts;
 	}

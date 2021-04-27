@@ -25,4 +25,5 @@ public interface MeritBankService {
 	public List<AccountHolder> sortAccountHolders();
 	public List<CDOffering> getCDOffering();
 	public void addCDOffering(CDOffering cdo);
+	void setCDOfferings(List<CDOffering> offerings);
 }

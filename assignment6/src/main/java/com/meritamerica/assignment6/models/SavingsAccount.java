@@ -1,7 +1,5 @@
 package com.meritamerica.assignment6.models;
 
-
-
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -12,6 +10,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name="SavingsAccount")
 public class SavingsAccount extends BankAccount {
@@ -34,7 +33,7 @@ public class SavingsAccount extends BankAccount {
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "accountholder_id")
 	@JsonIgnore
-    private AccountHolder accountHolder;
+   private AccountHolder accountHolder;
 	
 	public AccountHolder getAccountHolder() {
 		return accountHolder;

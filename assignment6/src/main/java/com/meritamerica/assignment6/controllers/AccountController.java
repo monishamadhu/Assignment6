@@ -14,11 +14,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.meritamerica.assignment6.exceptions.ExceedsCombinedBalanceLimitException;
 import com.meritamerica.assignment6.exceptions.InvalidAccountDetailsException;
+import com.meritamerica.assignment6.exceptions.NegativeAmountException;
 import com.meritamerica.assignment6.exceptions.NoResourceFoundException;
 import com.meritamerica.assignment6.models.AccountHolder;
 import com.meritamerica.assignment6.models.AccountHoldersContactDetails;
 import com.meritamerica.assignment6.models.CDAccount;
+import com.meritamerica.assignment6.models.CDAccountDTO;
 import com.meritamerica.assignment6.models.CDOffering;
 import com.meritamerica.assignment6.models.CheckingAccount;
 import com.meritamerica.assignment6.models.SavingsAccount;
@@ -52,7 +55,7 @@ public class AccountController {
 	public List<CDOffering> getCDOfferings() {
 		return cdOfferingRepository.findAll();
 	}
-	
+	//-----------------------------------------------------------------
 	@Autowired
 	AccountHolderRepository accountHolderRepository;
 
@@ -62,21 +65,21 @@ public class AccountController {
 	@PostMapping("/accountholder")
 	@ResponseStatus(HttpStatus.CREATED)
 	public AccountHolder addAccHolders(@RequestBody @Valid AccountHolder accountHolder) throws InvalidAccountDetailsException {
-		/*if ((accountHolder.getFirstName() == null) || (accountHolder.getLastName() == null) ||(accountHolder.getSSN() == null)) {
+		if ((accountHolder.getFirstName() == null) || (accountHolder.getLastName() == null) ||(accountHolder.getSSN() == null)) {
 			throw new InvalidAccountDetailsException("Invalid details");
-		}*/
-		int a = accountHolder.getId();
+		}
+		//int a = accountHolder.getId();
 		accountHolderRepository.save(accountHolder); 
-		//return accountHolder;
+		return accountHolder;
 		//return accountHolderRepository.save(accountHolder); 
 		//accountHolder = accountHolderRepository.save(accountHolder);
-		return accountHolderRepository.findById(a).orElse(null);
+		//return accountHolderRepository.findById(a).orElse(null);
 		
 	}
 
 	@GetMapping("/accountholders")
 	public List<AccountHolder> getAll() {
-		
+	
 		return accountHolderRepository.findAll();
 	}
 	
@@ -113,14 +116,16 @@ public class AccountController {
 		return acch.getAccountHolderContactDetails();
 		
 	}
-
+//--------------------------------------------------------------------------------------------------------------------------------------
 	@Autowired
 	CheckingAccountRepository checkingAccountRepository;
 
 	@PostMapping("/accountholder/{id}/checkingaccounts")
-	public CheckingAccount addCheckingAccount(@PathVariable int id, @RequestBody CheckingAccount checkingAccount) {
+	@ResponseStatus(HttpStatus.CREATED)
+	public CheckingAccount addCheckingAccount(@PathVariable int id, @RequestBody CheckingAccount checkingAccount) throws NoResourceFoundException, NegativeAmountException, ExceedsCombinedBalanceLimitException {
 
 		AccountHolder accountHolder = accountHolderRepository.getOne(id);
+		
 		CheckingAccount ch = new CheckingAccount(meritBankServiceImpl.getNextAccountNumber(),checkingAccount.getBalance(), CheckingAccount.CHECKING_INTERESTRATE, meritBankServiceImpl.getDate());
 		ch.setAccountHolder(accountHolder);
 		return checkingAccountRepository.save(ch);
@@ -158,9 +163,13 @@ public class AccountController {
 	SavingsAccountRepository savingsAccountRepository;
 
 	@PostMapping("/accountholder/{id}/savingsaccounts")
-	public SavingsAccount addSavingsAccount(@PathVariable int id, @RequestBody SavingsAccount savingsAccount) {
+	@ResponseStatus(HttpStatus.CREATED)
+	public SavingsAccount addSavingsAccount(@PathVariable int id, @RequestBody SavingsAccount savingsAccount) throws NoResourceFoundException {
 
 		AccountHolder accountHolder = accountHolderRepository.getOne(id);
+		if (accountHolder == null) {
+			throw new NoResourceFoundException("Invalid id");
+		}
 		SavingsAccount sv = new SavingsAccount(meritBankServiceImpl.getNextAccountNumber(),
 				savingsAccount.getBalance(), SavingsAccount.SAVINGS_INTERESTRATE, meritBankServiceImpl.getDate());
 		sv.setAccountHolder(accountHolder);
@@ -181,16 +190,17 @@ public class AccountController {
 		
 
 	}
-	
+	//----------------------------------------------------------------------------------------------------------------------
 	@Autowired
 	CDAccountRepository cdAccountRepository;
 
 	@PostMapping("/accountholder/{id}/cdaccounts")
-	public CDAccount addCDAccount(@PathVariable int id, @RequestBody CDAccount cdAccount) {
+	@ResponseStatus(HttpStatus.CREATED)
+	public CDAccount addCDAccount(@PathVariable int id, @RequestBody CDAccountDTO dto) {
 
 		AccountHolder accountHolder = accountHolderRepository.getOne(id);
-		CDAccount cd = new CDAccount(meritBankServiceImpl.getNextAccountNumber(),
-				cdAccount.getBalance(), cdAccount.getInterestRate(), meritBankServiceImpl.getDate(), cdAccount.getTerm());
+		CDOffering cdOffer= meritBankServiceImpl.getCDOfferingById(dto.getCdOffering().getId());
+		CDAccount cd = new CDAccount(cdOffer,dto.getBalance());
 		cd.setAccountHolder(accountHolder);
 		return cdAccountRepository.save(cd);
 

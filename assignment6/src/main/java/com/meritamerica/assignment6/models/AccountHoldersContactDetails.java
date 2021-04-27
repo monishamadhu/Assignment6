@@ -14,9 +14,20 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Entity
 @Table(name="AccountHoldersContactDetails")
 public class AccountHoldersContactDetails {
+	public AccountHoldersContactDetails() {
+		
+	}
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int id;
+	
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
+	
 	private String phoneNum;
 	private String email;
 	
@@ -25,9 +36,7 @@ public class AccountHoldersContactDetails {
 	 @JsonIgnore
 	private AccountHolder accountHolder;
 	 
-	public AccountHoldersContactDetails() {
-		
-	}
+	
 	public AccountHolder getAccountHolder() {
 		return accountHolder;
 	}
@@ -54,11 +63,6 @@ public class AccountHoldersContactDetails {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	public int getId() {
-		return id;
-	}
-	public void setId(int id) {
-		this.id = id;
-	}
+	
 	
 }

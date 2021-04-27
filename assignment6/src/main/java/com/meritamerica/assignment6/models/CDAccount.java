@@ -28,7 +28,7 @@ public class CDAccount extends BankAccount {
 	public CDAccount() {
 		
 	}
-	//@Autowired
+
 	private static MeritBankService meritBankServiceImpl;
 	
 	@Id
@@ -87,16 +87,16 @@ public class CDAccount extends BankAccount {
 	public double getInterestRate() {
 		return this.cdOffering.getInterestRate();
 	}
-	@JsonIgnore
+	//@JsonIgnore
 	public int getTerm() {
 		return this.cdOffering.getTerm();
 	}
 	
-	@JsonIgnore
+	//@JsonIgnore
 	public int getcdOfferingId() {
 		return this.cdOffering.getId();
 	}
-	@JsonIgnore
+	//@JsonIgnore
 	public java.util.Date getStartDate(){
 		Date date=new Date();
 		return date;
@@ -111,4 +111,14 @@ public class CDAccount extends BankAccount {
 		double futureVal = getBalance() * Math.pow((1+this.getInterestRate()),this.getTerm());
 		return futureVal;
 	}
+	private double balance;
+	
+	
+	public double getBalance() {
+		return balance;
+	}
+	public void setBalance(double balance) {
+		this.balance = balance;
+	}
+	
 }

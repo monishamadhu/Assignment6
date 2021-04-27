@@ -25,23 +25,9 @@ import com.meritamerica.assignment6.services.MeritBankServiceImpl;
 @Entity
 @Table(name="CDAccount")
 public class CDAccount extends BankAccount {
-	public CDAccount() {
-		
-	}
-
-	private static MeritBankService meritBankServiceImpl;
-	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int id;
-	
-	public void setId(int id) {
-		this.id = id;
-	}
-	
-	public int getId() {
-		return id;
-	}
 	
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cdoffering_id")
@@ -51,6 +37,29 @@ public class CDAccount extends BankAccount {
     @JoinColumn(name = "accountholder_id")
 	@JsonIgnore
 	private  AccountHolder accountHolder;
+	
+	public CDAccount() {
+		
+	}
+	public CDAccount(int nextAccountNumber, CDOffering cdOffering,  double balance) {
+		
+		super(nextAccountNumber, balance,cdOffering.getInterestRate(),new Date());
+		
+		this.cdOffering=cdOffering;
+	}
+	public CDAccount(long accountNumber, double balance, double interestRate,java.util.Date accountOpenedOn,int term) {
+		super(accountNumber,balance,interestRate,accountOpenedOn);
+		
+		this.cdOffering = new CDOffering(term, interestRate);
+	}
+	
+	public void setId(int id) {
+		this.id = id;
+	}
+	
+	public int getId() {
+		return id;
+	}
 		
 	public AccountHolder getAccountHolder() {
 		return accountHolder;
@@ -58,14 +67,6 @@ public class CDAccount extends BankAccount {
 
 	public void setAccountHolder(AccountHolder accountHolder) {
 		this.accountHolder = accountHolder;
-	}
-
-	
-	public CDAccount( CDOffering cdOffering,  double balance) {
-		
-		super(meritBankServiceImpl.getNextAccountNumber(), balance,cdOffering.getInterestRate(),new Date());
-		
-		this.cdOffering=cdOffering;
 	}
 
 	public CDOffering getCdOffering() {
@@ -76,14 +77,6 @@ public class CDAccount extends BankAccount {
 		this.cdOffering = cdOffering;
 	}
 
-	public CDAccount(long accountNumber, double balance, double interestRate,java.util.Date accountOpenedOn,int term) {
-		super(accountNumber,balance,interestRate,accountOpenedOn);
-		
-		this.cdOffering = new CDOffering(term, interestRate);
-	}
-	
-	
-	
 	public double getInterestRate() {
 		return this.cdOffering.getInterestRate();
 	}
@@ -101,7 +94,7 @@ public class CDAccount extends BankAccount {
 		Date date=new Date();
 		return date;
 	}
-	public boolean withdraw(double amount) {
+	/*public boolean withdraw(double amount) {
 		return false;
 	}
 	public boolean deposit(double amount) {
@@ -110,15 +103,6 @@ public class CDAccount extends BankAccount {
 	public double futureValue() {
 		double futureVal = getBalance() * Math.pow((1+this.getInterestRate()),this.getTerm());
 		return futureVal;
-	}
-	private double balance;
-	
-	
-	public double getBalance() {
-		return balance;
-	}
-	public void setBalance(double balance) {
-		this.balance = balance;
-	}
+	}*/
 	
 }

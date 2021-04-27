@@ -14,13 +14,24 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Table(name="CheckingAccount")
 public class CheckingAccount extends BankAccount {
 	
-	public CheckingAccount() {
-		
-	}
-	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int id;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "accountholder_id")
+	@JsonIgnore
+    private AccountHolder accountHolder;
+	
+	public CheckingAccount() {
+		
+	}
+	public CheckingAccount(double balance) {
+		super(balance,CHECKING_INTERESTRATE);
+	}
+	public CheckingAccount(long accountNumber, double balance, double interestRate,java.util.Date accountOpenedOn) {
+		super(accountNumber,balance,interestRate,accountOpenedOn);
+	}
 	
 	public void setId(int id) {
 		this.id = id;
@@ -30,23 +41,12 @@ public class CheckingAccount extends BankAccount {
 		return id;
 	}
 	
-	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "accountholder_id")
-	@JsonIgnore
-    private AccountHolder accountHolder;
-	
 	public AccountHolder getAccountHolder() {
 		return accountHolder;
 	}
 	public void setAccountHolder(AccountHolder accountHolder) {
 		this.accountHolder = accountHolder;
 	}
-	public CheckingAccount(double balance) {
-		super(balance,CHECKING_INTERESTRATE);
-	}
-	public CheckingAccount(long accountNumber, double balance, double interestRate,java.util.Date accountOpenedOn) {
-		super(accountNumber,balance,interestRate,accountOpenedOn);
-	}
-	
+		
 	public static final double CHECKING_INTERESTRATE= 0.0001;
 }

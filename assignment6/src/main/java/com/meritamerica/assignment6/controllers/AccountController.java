@@ -68,7 +68,6 @@ public class AccountController {
 		if ((accountHolder.getFirstName() == null) || (accountHolder.getLastName() == null) ||(accountHolder.getSSN() == null)) {
 			throw new InvalidAccountDetailsException("Invalid details");
 		}
-		//int a = accountHolder.getId();
 		accountHolderRepository.save(accountHolder); 
 		return accountHolder;
 		//return accountHolderRepository.save(accountHolder); 
@@ -97,8 +96,12 @@ public class AccountController {
 	AccountHolderContactDetailsRepository accHolderContactDetailsRepository;
 
 	@PostMapping("/accountholder/{id}/contactdetails")
-	public AccountHolder addAccHoldersContact(@RequestBody @Valid AccountHoldersContactDetails accountHolderContact,@PathVariable int id) {
+	@ResponseStatus(HttpStatus.CREATED)
+	public AccountHolder addAccHoldersContact(@RequestBody @Valid AccountHoldersContactDetails accountHolderContact,@PathVariable int id) throws NoResourceFoundException {
 		AccountHolder accountHolder = accountHolderRepository.getOne(id);
+		if (accountHolder == null) {
+			throw new NoResourceFoundException("Invalid id");
+		}
 		AccountHoldersContactDetails ahcontact=new AccountHoldersContactDetails(accountHolderContact.getPhoneNum(),accountHolderContact.getEmail());
 		ahcontact.setAccountHolder(accountHolder);
 		accHolderContactDetailsRepository.save(ahcontact);
@@ -108,6 +111,7 @@ public class AccountController {
 	}
 
 	@GetMapping("/accountholder/{id}/contactdetails")
+	@ResponseStatus(HttpStatus.CREATED)
 	public AccountHoldersContactDetails getContactsAll(AccountHolder acch, @PathVariable int id) throws NoResourceFoundException{
 		acch = accountHolderRepository.findById(id).orElse(null);
 		if (acch == null) {
@@ -124,29 +128,21 @@ public class AccountController {
 	@ResponseStatus(HttpStatus.CREATED)
 	public CheckingAccount addCheckingAccount(@PathVariable int id, @RequestBody CheckingAccount checkingAccount) throws NoResourceFoundException, NegativeAmountException, ExceedsCombinedBalanceLimitException {
 
+		if(checkingAccount.getBalance()<0) {
+			throw new NegativeAmountException();
+		} 	
+			
 		AccountHolder accountHolder = accountHolderRepository.getOne(id);
-		
+		if(accountHolder==null) {
+			throw new NoResourceFoundException("Invalid id");
+		}
+		if (accountHolder.getCombinedBalance()+checkingAccount.getBalance()>250000) {
+			throw new ExceedsCombinedBalanceLimitException("exceeds limit of amount 250,000 max");
+		}
 		CheckingAccount ch = new CheckingAccount(meritBankServiceImpl.getNextAccountNumber(),checkingAccount.getBalance(), CheckingAccount.CHECKING_INTERESTRATE, meritBankServiceImpl.getDate());
 		ch.setAccountHolder(accountHolder);
 		return checkingAccountRepository.save(ch);
 		 
-		// return null;
-
-//		if (id<=MeritBankServiceImpl.accHolderList.size()) {
-//			AccountHolder accountHolder = MeritBankServiceImpl.getAccountHolderById(id);
-//			if(ch.getBalance()<0) {
-//				throw new NegativeAmountException();
-//			} 				
-//			if (accountHolder.getCombinedBalance()+ch.getBalance()>250000) {
-//				throw new ExceedsCombinedBalanceLimitException("exceeds limit of amount 250,000 max");
-//			}
-//			ch=new CheckingAccount(MeritBankServiceImpl.getNextAccountNumber(),ch.getBalance(),CheckingAccount.CHECKING_INTERESTRATE,MeritBankServiceImpl.getDate());
-//			accountHolder.addCheckingAccount(ch);
-//			
-//			return ch;
-//		}
-//		throw new NoResourceFoundException("Invalid id");
-//		return ch;
 	}
 
 	@GetMapping("/accountholder/{id}/checkingaccounts")
@@ -164,11 +160,16 @@ public class AccountController {
 
 	@PostMapping("/accountholder/{id}/savingsaccounts")
 	@ResponseStatus(HttpStatus.CREATED)
-	public SavingsAccount addSavingsAccount(@PathVariable int id, @RequestBody SavingsAccount savingsAccount) throws NoResourceFoundException {
-
+	public SavingsAccount addSavingsAccount(@PathVariable int id, @RequestBody SavingsAccount savingsAccount) throws NoResourceFoundException, NegativeAmountException, ExceedsCombinedBalanceLimitException {
+		if(savingsAccount.getBalance()<0) {
+			throw new NegativeAmountException();
+		}
 		AccountHolder accountHolder = accountHolderRepository.getOne(id);
 		if (accountHolder == null) {
 			throw new NoResourceFoundException("Invalid id");
+		}
+		if (accountHolder.getCombinedBalance()+savingsAccount.getBalance()>250000) {
+			throw new ExceedsCombinedBalanceLimitException("exceeds limit of amount 250,000 max");
 		}
 		SavingsAccount sv = new SavingsAccount(meritBankServiceImpl.getNextAccountNumber(),
 				savingsAccount.getBalance(), SavingsAccount.SAVINGS_INTERESTRATE, meritBankServiceImpl.getDate());
@@ -196,27 +197,31 @@ public class AccountController {
 
 	@PostMapping("/accountholder/{id}/cdaccounts")
 	@ResponseStatus(HttpStatus.CREATED)
-	public CDAccount addCDAccount(@PathVariable int id, @RequestBody CDAccountDTO dto) {
-
+	public CDAccount addCDAccount(@PathVariable int id, @RequestBody CDAccountDTO dto) throws NoResourceFoundException, NegativeAmountException {
+		if(dto.getBalance()<0) {
+			throw new NegativeAmountException();
+		}
 		AccountHolder accountHolder = accountHolderRepository.getOne(id);
+		if (accountHolder == null) {
+			throw new NoResourceFoundException("Invalid id");
+		}
 		CDOffering cdOffer= meritBankServiceImpl.getCDOfferingById(dto.getCdOffering().getId());
-		CDAccount cd = new CDAccount(cdOffer,dto.getBalance());
+		CDAccount cd = new CDAccount(accountHolder.getTotalAccounts() + 1, cdOffer,dto.getBalance());
 		cd.setAccountHolder(accountHolder);
 		return cdAccountRepository.save(cd);
 
 	}
 
-	/*@GetMapping("/accountholder/{id}/savingsaccounts")
+	@GetMapping(value="/accountholder/{id}/cdaccounts")
 	@ResponseStatus(HttpStatus.CREATED)
-	public List<SavingsAccount> getSavingsAcc(AccountHolder acch, @PathVariable int id)
-			throws NoResourceFoundException {
-		
-		acch = accountHolderRepository.findById(id).orElse(null);
-		if (acch == null) {
+	public List<CDAccount> getCDAcc(AccountHolder accountHolder, @PathVariable int id) throws NoResourceFoundException {
+	    accountHolder = accountHolderRepository.getOne(id);
+		if (accountHolder == null) {
 			throw new NoResourceFoundException("Invalid id");
-		}	
-		return acch.getCDAccount();
+		}
+		return accountHolder.getcdAccList();
+	}
 
-	}*/
+	
 
 }

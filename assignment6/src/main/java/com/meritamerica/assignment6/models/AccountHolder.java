@@ -28,19 +28,29 @@ public class AccountHolder implements Comparable<AccountHolder> {
 	private String ssn;
 	private static int nextId = 1;
 
-//	private ArrayList<SavingsAccount> savingsAccList = new ArrayList<SavingsAccount>();
-//	private ArrayList<CheckingAccount> checkingAccList = new ArrayList<CheckingAccount>();
-//	private ArrayList<CDAccount> cdAccList = new ArrayList<CDAccount>();
-
 	@OneToOne(fetch = FetchType.LAZY, mappedBy = "accountHolder")
 	private AccountHoldersContactDetails accountHolderContactDetails;
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "accountHolder")
 	private List<CheckingAccount> checkingAccountList = new ArrayList<>();
+	
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "accountHolder")
 	private List<SavingsAccount> savingsAccountList = new ArrayList<>();
+	
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "accountHolder")
 	private List<CDAccount> cdAccList = new ArrayList<>();
+	
+	public AccountHolder(String firstName, String middleName, String lastName, String ssn, int id) {
+		this.firstName = firstName;
+		this.middleName = middleName;
+		this.lastName = lastName;
+		this.ssn = ssn;
+		this.id = nextId++;
+	}
+
+	public AccountHolder() {
+
+	}
 
 	public List<CDAccount> getcdAccList() {
 		return cdAccList;
@@ -72,18 +82,6 @@ public class AccountHolder implements Comparable<AccountHolder> {
 
 	public void setCheckingAccountList(List<CheckingAccount> checkingAccList) {
 		this.checkingAccountList = checkingAccList;
-	}
-
-	public AccountHolder(String firstName, String middleName, String lastName, String ssn, int id) {
-		this.firstName = firstName;
-		this.middleName = middleName;
-		this.lastName = lastName;
-		this.ssn = ssn;
-		this.id = nextId++;
-	}
-
-	public AccountHolder() {
-
 	}
 
 	public int getId() {
@@ -154,16 +152,11 @@ public class AccountHolder implements Comparable<AccountHolder> {
 		return checkingAccountList.get(accountHolderId - 1);
 	}
 
-	// directly the size of arraylist is calculated.
 	public int getNumberOfCheckingAccounts() {
 		int numberOfCheckingAccounts = checkingAccountList.size();
 		return numberOfCheckingAccounts;
 	}
 
-	// adds each checking account of the account holder from the array of checking
-	// accounts
-	// to get the checking account array we call the already defined function
-	// getCheckingAccounts()
 	public double getCheckingBalance() {
 		CheckingAccount[] checkingArr = checkingAccountList.toArray(new CheckingAccount[0]);
 		double checkingTotal = 0;
@@ -174,8 +167,6 @@ public class AccountHolder implements Comparable<AccountHolder> {
 		return checkingTotal;
 	}
 
-	// add a new savings account with a given opening balance if combined balance is
-	// less than $250,000
 	public SavingsAccount addSavingsAccount(double openingBalance) {
 		SavingsAccount savings = null;
 		if ((getSavingsBalance() + getCheckingBalance() + openingBalance) < 250000) {
@@ -185,11 +176,10 @@ public class AccountHolder implements Comparable<AccountHolder> {
 		return savings;
 	}
 
-	// add a new savings account if combined balance is less than $250,000
 	public SavingsAccount addSavingsAccount(SavingsAccount savingsAccount) {
 		if ((getSavingsBalance() + getCheckingBalance() + savingsAccount.getBalance()) < 250000) {
 			this.savingsAccountList.add(savingsAccount);
-			return savingsAccount; // returning savingsAccount as the return type expected is object.
+			return savingsAccount; 
 		} else {
 			return null;
 		}
@@ -265,5 +255,8 @@ public class AccountHolder implements Comparable<AccountHolder> {
 			return -1;
 		}
 	}
+	 public int getTotalAccounts() {
+		 return getNumberOfCDAccounts()+getNumberOfSavingsAccounts()+getNumberOfCheckingAccounts();
+	 }
 
 }

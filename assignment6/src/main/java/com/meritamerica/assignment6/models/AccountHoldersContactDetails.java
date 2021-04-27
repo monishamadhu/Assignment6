@@ -14,13 +14,25 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Entity
 @Table(name="AccountHoldersContactDetails")
 public class AccountHoldersContactDetails {
-	public AccountHoldersContactDetails() {
-		
-	}
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int id;
+	private String phoneNum;
+	private String email;
 	
+	 @OneToOne(cascade = CascadeType.ALL)
+	 @JoinColumn(name = "accountholder_id")
+	 @JsonIgnore
+	private AccountHolder accountHolder;
+	
+	public AccountHoldersContactDetails() {
+		
+	}
+	public AccountHoldersContactDetails(String phoneNum, String email) {
+		this.phoneNum=phoneNum;
+		this.email = email;
+	}
 	public int getId() {
 		return id;
 	}
@@ -28,26 +40,12 @@ public class AccountHoldersContactDetails {
 		this.id = id;
 	}
 	
-	private String phoneNum;
-	private String email;
-	
-	 @OneToOne(cascade = CascadeType.ALL)
-	  @JoinColumn(name = "accountholder_id")
-	 @JsonIgnore
-	private AccountHolder accountHolder;
-	 
-	
 	public AccountHolder getAccountHolder() {
 		return accountHolder;
 	}
 
 	public void setAccountHolder(AccountHolder accountHolder) {
 		this.accountHolder = accountHolder;
-	}
-
-	public AccountHoldersContactDetails(String phoneNum, String email) {
-		this.phoneNum=phoneNum;
-		this.email = email;
 	}
 	
 	public String getPhoneNum() {
@@ -63,6 +61,4 @@ public class AccountHoldersContactDetails {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	
-	
 }

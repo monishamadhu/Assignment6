@@ -27,22 +27,9 @@ public abstract class BankAccount {
 	private  long accountNumber;
 	private  java.util.Date date;
 	
-	/*@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "accountholder_id")
-//	@JsonIgnore
-    private AccountHolder accountHolder;
-	
-	public AccountHolder getAccountHolder() {
-		return accountHolder;
-	}
-	public void setAccountHolder(AccountHolder accountHolder) {
-		this.accountHolder = accountHolder;
-	}*/
-	
 	public BankAccount(){
 	
 	}
-	
 	public BankAccount(double balance, double interestRate) {
 		this.balance=balance;
 		this.interestRate = interestRate;
@@ -58,6 +45,18 @@ public abstract class BankAccount {
 		this.interestRate = interestRate;
 		this.date = accountOpenedOn;
 	}
+	public java.util.Date getDate() {
+		return date;
+	}
+	public void setDate(java.util.Date date) {
+		this.date = date;
+	}
+	public void setInterestRate(double interestRate) {
+		this.interestRate = interestRate;
+	}
+	public void setAccountNumber(long accountNumber) {
+		this.accountNumber = accountNumber;
+	}
 	public  java.util.Date getOpenedOn(){
 		return this.date;
 	}	
@@ -67,10 +66,13 @@ public abstract class BankAccount {
 	public double getBalance() {
 		return this.balance;
 	}
+	public void setBalance(double balance) {
+		this.balance = balance;
+	}
 	public double getInterestRate() {
 		return this.interestRate;
 	}
-	public boolean withdraw(double amount) {
+	/*public boolean withdraw(double amount) {
 		
 		if( (balance-amount)>=0){
 			balance-= amount;
@@ -91,11 +93,11 @@ public abstract class BankAccount {
 		double futureVal = balance * Math.pow((1+this.interestRate),years);
 		return futureVal;
 	}
-	/*public double futureValue(int years) {
+	public double futureValue(int years) {
 		double futureVal = MeritBankServiceImpl.recursiveFutureValue(this.getBalance(), years, this.getInterestRate());
 		return futureVal;
-	}*/
-	/*public static BankAccount readFromString(String accountData) throws java.lang.NumberFormatException{
+	}
+	public static BankAccount readFromString(String accountData) throws java.lang.NumberFormatException{
 		StringTokenizer token = new StringTokenizer(accountData, ",");
 		int numAccount = Integer.parseInt(token.nextToken());
 		double balance = Double.parseDouble(token.nextToken());
@@ -103,13 +105,13 @@ public abstract class BankAccount {
 		Date date = new Date(token.nextToken());//
 		BankAccount bank = new BankAccount(numAccount, balance, rate, date);
 		return bank;
-	}*/
+	}
 
 	public String writeToString() {
 		String accountString = getAccountNumber()+","+getBalance()+","+getInterestRate()+","+getOpenedOn(); 
 		return accountString;
 	}
-	/*public void addTransaction(Transaction transaction) {
+	public void addTransaction(Transaction transaction) {
 		this.transactAmount.add(transaction);
 	}
 	
@@ -121,6 +123,6 @@ public abstract class BankAccount {
 		String toStr =  "Acct Num "+getAccountNumber()+ " balance "+getBalance();
 		return toStr;
 	}
-	  */	
-//private ArrayList<Transaction> transactAmount = new ArrayList<Transaction>();
+	  	
+	private ArrayList<Transaction> transactAmount = new ArrayList<Transaction>();*/
 }

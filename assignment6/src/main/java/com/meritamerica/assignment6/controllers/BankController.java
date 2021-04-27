@@ -148,7 +148,7 @@ public class BankController {
 			
 			AccountHolder accountHolder = meritBankServiceImpl.getAccountHolderById(id);
 			CDOffering cdo = meritBankServiceImpl.getCDOfferingById(dto.getCdOffering().getId());
-			CDAccount cda = new CDAccount(cdo, dto.getBalance());
+			CDAccount cda = new CDAccount(accountHolder.getTotalAccounts()+1, cdo,dto.getBalance());
 			
 			if(cda.getBalance()<0) {
 				throw new NegativeAmountException();
